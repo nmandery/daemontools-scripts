@@ -1,0 +1,17 @@
+#!/bin/sh
+
+MAPSERV_SOCKET=/var/run/fcgi/mapserver.sock
+USER=www-data
+DAEMON=/usr/lib/cgi-bin/mapserv
+CHILDREN=5
+
+# the -F switch of spawn-fcg does not work when the -n swich
+# is set. using multiwatch instead
+# see http://manpages.ubuntu.com/manpages/lucid/man1/spawn-fcgi.1.html
+
+exec setuidgid $USER spawn-fcgi \
+  -s $MAPSERV_SOCKET \
+  -n \
+  -u $USER \
+  -- \
+  /usr/bin/multiwatch -f $CHILDREN $DAEMON
